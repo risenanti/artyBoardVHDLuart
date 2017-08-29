@@ -37,7 +37,11 @@ entity top is
     CLK100MHZ : in std_logic;
     btn        : in std_logic_vector(3 downto 0);
     sw        : in std_logic_vector(3 downto 0);
-    led       : out std_logic_vector(3 downto 0)
+    led       : out std_logic_vector(3 downto 0);
+    
+    uart_txd_in  : in std_logic;
+    uart_rxd_out : out std_logic
+    
    );
 end top;
 
