@@ -1,4 +1,4 @@
-set_property SRC_FILE_INFO {cfile:/home/keithconley/Documents/xilinx/artyUartPrj/artyUartPrj.srcs/constrs_1/new/arty.xdc rfile:../../../artyUartPrj.srcs/constrs_1/new/arty.xdc id:1} [current_design]
+set_property SRC_FILE_INFO {cfile:/home/keith/xilProjects/artyBoardVHDLuart/artyUartPrj.srcs/constrs_1/new/arty.xdc rfile:../../../artyUartPrj.srcs/constrs_1/new/arty.xdc id:1} [current_design]
 set_property src_info {type:XDC file:1 line:8 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict { PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports { CLK100MHZ }]; #IO_L12P_T1_MRCC_35 Sch=gclk[100]
 set_property src_info {type:XDC file:1 line:13 export:INPUT save:INPUT read:READ} [current_design]
@@ -25,3 +25,7 @@ set_property src_info {type:XDC file:1 line:44 export:INPUT save:INPUT read:READ
 set_property -dict { PACKAGE_PIN B9    IOSTANDARD LVCMOS33 } [get_ports { btn[2] }]; #IO_L11N_T1_SRCC_16 Sch=btn[2]
 set_property src_info {type:XDC file:1 line:45 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict { PACKAGE_PIN B8    IOSTANDARD LVCMOS33 } [get_ports { btn[3] }]; #IO_L12P_T1_MRCC_16 Sch=btn[3]
+set_property src_info {type:XDC file:1 line:93 export:INPUT save:INPUT read:READ} [current_design]
+set_property -dict { PACKAGE_PIN D10   IOSTANDARD LVCMOS33 } [get_ports { uart_rxd_out }]; #IO_L19N_T3_VREF_16 Sch=uart_rxd_out
+set_property src_info {type:XDC file:1 line:94 export:INPUT save:INPUT read:READ} [current_design]
+set_property -dict { PACKAGE_PIN A9    IOSTANDARD LVCMOS33 } [get_ports { uart_txd_in }]; #IO_L14N_T2_SRCC_16 Sch=uart_txd_in

@@ -7,20 +7,20 @@
 # 
 
 if [ -z "$PATH" ]; then
-  PATH=/home/keithconley/xilinx/SDK/2017.2/bin:/home/keithconley/xilinx/Vivado/2017.2/ids_lite/ISE/bin/lin64:/home/keithconley/xilinx/Vivado/2017.2/bin
+  PATH=/home/keith/Documents/SDK/2017.1/bin:/home/keith/Documents/Vivado/2017.1/ids_lite/ISE/bin/lin64:/home/keith/Documents/Vivado/2017.1/bin
 else
-  PATH=/home/keithconley/xilinx/SDK/2017.2/bin:/home/keithconley/xilinx/Vivado/2017.2/ids_lite/ISE/bin/lin64:/home/keithconley/xilinx/Vivado/2017.2/bin:$PATH
+  PATH=/home/keith/Documents/SDK/2017.1/bin:/home/keith/Documents/Vivado/2017.1/ids_lite/ISE/bin/lin64:/home/keith/Documents/Vivado/2017.1/bin:$PATH
 fi
 export PATH
 
 if [ -z "$LD_LIBRARY_PATH" ]; then
-  LD_LIBRARY_PATH=/home/keithconley/xilinx/Vivado/2017.2/ids_lite/ISE/lib/lin64
+  LD_LIBRARY_PATH=/home/keith/Documents/Vivado/2017.1/ids_lite/ISE/lib/lin64
 else
-  LD_LIBRARY_PATH=/home/keithconley/xilinx/Vivado/2017.2/ids_lite/ISE/lib/lin64:$LD_LIBRARY_PATH
+  LD_LIBRARY_PATH=/home/keith/Documents/Vivado/2017.1/ids_lite/ISE/lib/lin64:$LD_LIBRARY_PATH
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='/home/keithconley/Documents/xilinx/artyUartPrj/artyUartPrj.runs/synth_1'
+HD_PWD='/home/keith/xilProjects/artyBoardVHDLuart/artyUartPrj.runs/synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
