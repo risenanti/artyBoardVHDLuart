@@ -1,0 +1,67 @@
+Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2017.1 (lin64) Build 1846317 Fri Apr 14 18:54:47 MDT 2017
+| Date         : Tue Dec 12 15:12:12 2017
+| Host         : keith-OptiPlex-790 running 64-bit Ubuntu 16.04.3 LTS
+| Command      : report_methodology -file uartFTDI_methodology_drc_routed.rpt -rpx uartFTDI_methodology_drc_routed.rpx
+| Design       : uartFTDI
+| Device       : xc7a35ticsg324-1L
+| Speed File   : -1L
+| Design State : Routed
+-----------------------------------------------------------------------------------------------------------------------
+
+Report Methodology
+
+Table of Contents
+-----------------
+1. REPORT SUMMARY
+2. REPORT DETAILS
+
+1. REPORT SUMMARY
+-----------------
+            Netlist: netlist
+          Floorplan: design_1
+      Design limits: <entire design considered>
+             Max violations: <unlimited>
+             Violations found: 5
++-----------+----------+--------------------------------------------------------+------------+
+| Rule      | Severity | Description                                            | Violations |
++-----------+----------+--------------------------------------------------------+------------+
+| TIMING-18 | Warning  | Missing input or output delay                          | 2          |
+| TIMING-20 | Warning  | Non-clocked latch                                      | 1          |
+| XDCC-1    | Warning  | Scoped Clock constraint overwritten with the same name | 1          |
+| XDCC-7    | Warning  | Scoped Clock constraint overwritten on the same source | 1          |
++-----------+----------+--------------------------------------------------------+------------+
+
+2. REPORT DETAILS
+-----------------
+TIMING-18#1 Warning
+Missing input or output delay  
+An output delay is missing on led relative to clock(s) clk100MHZ 
+Related violations: <none>
+
+TIMING-18#2 Warning
+Missing input or output delay  
+An output delay is missing on usbTXOut relative to clock(s) clk100MHZ 
+Related violations: <none>
+
+TIMING-20#1 Warning
+Non-clocked latch  
+The latch txStart_next_reg cannot be properly analyzed as its control pin txStart_next_reg/G is not reached by a timing clock
+Related violations: <none>
+
+XDCC-1#1 Warning
+Scoped Clock constraint overwritten with the same name  
+A new clock constraint create_clock overrides a previous scoped clock constraint with the same name. It is not recommended to override a scoped (typically an IP) clock constraint and could result in unexpected behaviors.
+New: create_clock -period 10.000 -waveform {0.000 5.000} [get_ports clk100MHZ] (Source: /home/keith/xilProjects/artyFTDI/artyFTDI.srcs/constrs_1/new/artyConstr.xdc (Line: 3))
+Previous: create_clock -period 10.000 [get_ports clk100MHZ] (Source: /home/keith/xilProjects/artyFTDI/artyFTDI.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xdc (Line: 56))
+Related violations: <none>
+
+XDCC-7#1 Warning
+Scoped Clock constraint overwritten on the same source  
+A new clock constraint create_clock overrides a previous scoped clock constraint defined on the same source. It is not recommended to override a scoped (typically an IP) clock constraint and could result in unexpected behaviors.
+New: create_clock -period 10.000 -waveform {0.000 5.000} [get_ports clk100MHZ] (Source: /home/keith/xilProjects/artyFTDI/artyFTDI.srcs/constrs_1/new/artyConstr.xdc (Line: 3))
+Previous: create_clock -period 10.000 [get_ports clk100MHZ] (Source: /home/keith/xilProjects/artyFTDI/artyFTDI.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xdc (Line: 56))
+Related violations: <none>
+
+
