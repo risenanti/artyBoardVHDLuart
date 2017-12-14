@@ -1,12 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
 library UNISIM;
 use UNISIM.VComponents.all;
 
@@ -62,70 +57,107 @@ signal blink_next : std_logic;
 
 signal txStart : STD_LOGIC;
 signal txStart_next : std_logic;
+
 signal txDone  : STD_LOGIC;
+
 signal txDataBuffer : unsigned(7 downto 0) := "01000001"; -- 'A'
 signal baudRateTick: std_logic; --SETS BAUD RATE
+
+type state_type is (init, shift, latch, transmit, finishTransmission, done);
+signal state : state_type;
+signal state_next : state_type;
 
 signal txShiftBuffer : unsigned (BitWidth downto 0);
 signal txDataShiftTemp : unsigned (BitWidth downto 0);
 signal lowerBounds : integer := 0;
---signal upperBounds : integer := 7;
+signal lowerBounds_next : integer := 0;
 
 begin
+        process(blink)
+			begin
+			if (rising_edge(blink)) then 
+				case state is
+				
+				when init =>
+					lowerBounds_next <= 7;
+					--doneSig<='0';
+					txDataBuffer<=txShiftBuffer(7 downto 0);
+					state_next <= transmit;
+				
+				when shift =>
+					txDataShiftTemp<= shift_left(txShiftBuffer,lowerBounds);
+					if (lowerBounds > bitWidth) then
+							state_next <= done;
+						else
+							state_next <= latch;
+						end if;	
+
+				when latch =>
+					txDataBuffer<=txDataShiftTemp(7 downto 0);
+					state_next<= transmit;
+				
+				when transmit => 
+					if(txDone = '0') then 
+						txStart_next <= '1';
+					else 
+						txStart_next<='0';
+					end if;					
+					state_next <= finishTransmission;
+									
+				when finishTransmission =>					
+					txStart_next <= '0';
+					lowerBounds_next <= lowerBounds+8;
+					state_next <= shift;
+					
+				when done => 
+					--doneSig<='1';
+					state_next <= init;
+				
+				end case;
+		end if;
+		end process;
+			
+			
         
-        process(count, blink)
+        --txCounter
+        process(count)
         begin
          if (count > 60000) then --10000000 1 second
-             blink_next   <= not blink;
              count_next <= to_unsigned(0,16);
-             txStart_next <= not txStart;
+             blink_next   <= not blink;
              else
              count_next <=count+1;
              blink_next   <=  blink;
          end if;    
         end process; 
         
+        --state shifting
         process(clk10MHZ)
-            begin
-            
-            txDataShiftTemp <= shift_right(txShiftBuffer, lowerBounds);
-            txDataBuffer<= txDataShiftTemp(7 downto 0);
-                        
+            begin             
             if(lowerBounds > BitWidth) then
 				lowerBounds <= 0;
 				end if;
             
             if(rising_edge(clk10MHZ)) then
-               count <= count_next;
-               blink  <=  blink_next;
-               txStart<=txStart_next;
+               count      <= count_next;
+               blink      <= blink_next;
+               txStart    <= txStart_next;
+               state      <= state_next;
+               lowerBounds <= lowerBounds_next;
                 end if;   
             end process;
-            
-        process(txDone)
-           begin
-            if(rising_edge(txDone)) then
-            	--txStart<='0';
-            	lowerBounds<=lowerBounds+7;
-            end if;
-            
-            if (lowerBounds>BitWidth) then
-                lowerBounds <= 0;
-            end if;  
-            end process;         
-        
-        txShiftBuffer <= unsigned(DIN);               
+         
         baudRateGenerator: mod_m_counter
-						
 						   generic map(N=>8, M=>62) 
 						   port map(clk=>clk10MHZ, 
-						   reset=>'0', max_tick=>baudRateTick, q=>open);
-            
+						   reset=>'0', max_tick=>baudRateTick, q=>open);     
 	    tansmitOut       : uart_tx 
 	                       generic map(DBIT=>8, SB_TICK=>16)
                            port map (clk=>clk10MHZ, reset => '0', 
 						   tx_start => txStart, s_tick=>baudRateTick,
 						   din => std_logic_vector(txDataBuffer),tx_done_tick => txDone, 
 						   tx => USB_UART_RX_FPGA_TX_LS); 
+       
+        txShiftBuffer <= unsigned(DIN); 
         heartBeatLED <= blink;
 end Behavioral;
