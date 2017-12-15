@@ -35,7 +35,6 @@ signal clk300MHZ : std_logic := '0';
 signal clk10MHZ  : std_logic := '0';
 
 component uartFtdi is
-
 	generic(
 		BitWidth 	  		   : integer := 32;
 		NumberOfBytes 		   : integer :=4
@@ -43,8 +42,9 @@ component uartFtdi is
     Port ( 
 		clk10MHZ  	  		   : IN std_logic; 
 		heartBeatLED  		   : OUT STD_LOGIC;
+		donetick               : OUT STD_LOGIC;
       
-		DIN           		   : IN std_logic_vector(BitWidth downto 0);
+		DIN           		   : IN std_logic_vector(BitWidth-1 downto 0);
 		USB_UART_RX_FPGA_TX_LS : OUT  STD_LOGIC
     );
 end component;
@@ -81,9 +81,9 @@ begin
          );
          
        test1 : uartFTDI
-       generic map (BitWidth => 31, NumberOfBytes => 4)
+       generic map (BitWidth => 32, NumberOfBytes => 4)
 			port map(
-			clk10MHZ => clk10MHZ, heartBeatLED => heartBeatLED,
+			clk10MHZ => clk10MHZ, heartBeatLED => heartBeatLED, donetick=>open, 
 			DIN => txDataSend,
 			USB_UART_RX_FPGA_TX_LS => USB_UART_RX_FPGA_TX_LS);
 			

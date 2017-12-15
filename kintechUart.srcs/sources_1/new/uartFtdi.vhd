@@ -13,8 +13,9 @@ entity uartFtdi is
     Port ( 
 		clk10MHZ  	  		   : IN std_logic; 
 		heartBeatLED  		   : OUT STD_LOGIC;
+		donetick               : OUT STD_LOGIC;
       
-		DIN           		   : IN std_logic_vector(BitWidth downto 0);
+		DIN           		   : IN std_logic_vector(BitWidth-1 downto 0);
 		USB_UART_RX_FPGA_TX_LS : OUT  STD_LOGIC
     );
 end uartFtdi;
@@ -60,61 +61,65 @@ signal txStart_next : std_logic;
 
 signal txDone  : STD_LOGIC;
 
-signal txDataBuffer : unsigned(7 downto 0) := "01000001"; -- 'A'
+signal txDataBuffer : std_logic_vector(7 downto 0) := "01000001"; -- 'A'
 signal baudRateTick: std_logic; --SETS BAUD RATE
 
-type state_type is (init, shift, latch, transmit, finishTransmission, done);
+type state_type is (init, send_A_byte, transmit, finishTransmission, done);
 signal state : state_type;
 signal state_next : state_type;
 
-signal txShiftBuffer : unsigned (BitWidth downto 0);
-signal txDataShiftTemp : unsigned (BitWidth downto 0);
-signal lowerBounds : integer := 0;
-signal lowerBounds_next : integer := 0;
+signal txShiftBuffer, txShiftBuffer_next : std_logic_vector (BitWidth-1 downto 0);
+
+signal lower_Bounds : integer := 0;
+signal lower_Bounds_next : integer := 0;
+signal higher_Bounds : integer := 0;
+signal higher_Bounds_next : integer := 0;
+signal doneSig          : std_logic :='0';
+
+
+ --(init, send_A_byte, transmit, finishTransmission, done);
+
 
 begin
-        process(blink)
+txDataBuffer <= txShiftBuffer( 7 downto 0);
+        process(state)
 			begin
-			if (rising_edge(blink)) then 
 				case state is
 				
 				when init =>
-					lowerBounds_next <= 7;
-					--doneSig<='0';
-					txDataBuffer<=txShiftBuffer(7 downto 0);
-					state_next <= transmit;
-				
-				when shift =>
-					txDataShiftTemp<= shift_left(txShiftBuffer,lowerBounds);
-					if (lowerBounds > bitWidth) then
+					higher_Bounds_next <= 7;
+					doneSig <= '0';
+					state_next <= send_A_byte;
+				    txShiftBuffer_next <= DIN;
+				    
+				when send_A_byte =>
+					if (higher_Bounds > bitWidth) then
 							state_next <= done;
 						else
-							state_next <= latch;
+							state_next <= transmit;
 						end if;	
-
-				when latch =>
-					txDataBuffer<=txDataShiftTemp(7 downto 0);
-					state_next<= transmit;
+                     txShiftBuffer_next <= txShiftBuffer;
 				
 				when transmit => 
 					if(txDone = '0') then 
 						txStart_next <= '1';
+						state_next <= transmit;
 					else 
 						txStart_next<='0';
+						state_next <= finishTransmission;
 					end if;					
-					state_next <= finishTransmission;
-									
+					txShiftBuffer_next <= txShiftBuffer;				
 				when finishTransmission =>					
 					txStart_next <= '0';
-					lowerBounds_next <= lowerBounds+8;
-					state_next <= shift;
+                    txShiftBuffer_next <= "00000000" & txShiftBuffer(BitWidth-1 downto 8);
+					higher_Bounds_next <= higher_Bounds+8;
+					state_next <= send_A_byte;
 					
 				when done => 
-					--doneSig<='1';
+					doneSig<='1';
 					state_next <= init;
 				
 				end case;
-		end if;
 		end process;
 			
 			
@@ -134,16 +139,14 @@ begin
         --state shifting
         process(clk10MHZ)
             begin             
-            if(lowerBounds > BitWidth) then
-				lowerBounds <= 0;
-				end if;
             
             if(rising_edge(clk10MHZ)) then
                count      <= count_next;
                blink      <= blink_next;
                txStart    <= txStart_next;
                state      <= state_next;
-               lowerBounds <= lowerBounds_next;
+               higher_Bounds <= higher_Bounds_next;
+               txShiftBuffer <= txShiftBuffer_next;
                 end if;   
             end process;
          
@@ -155,9 +158,10 @@ begin
 	                       generic map(DBIT=>8, SB_TICK=>16)
                            port map (clk=>clk10MHZ, reset => '0', 
 						   tx_start => txStart, s_tick=>baudRateTick,
-						   din => std_logic_vector(txDataBuffer),tx_done_tick => txDone, 
+						   din => txDataBuffer,tx_done_tick => txDone, 
 						   tx => USB_UART_RX_FPGA_TX_LS); 
        
-        txShiftBuffer <= unsigned(DIN); 
+--        txShiftBuffer <= unsigned(DIN); 
+            donetick<=doneSig;
         heartBeatLED <= blink;
 end Behavioral;
