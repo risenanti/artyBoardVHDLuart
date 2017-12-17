@@ -1,3 +1,0 @@
-/home/keith/Documents/github/kintechUart/serialPortSoftware/build/CMakeFiles/edit_cache.dir
-/home/keith/Documents/github/kintechUart/serialPortSoftware/build/CMakeFiles/rebuild_cache.dir
-/home/keith/Documents/github/kintechUart/serialPortSoftware/build/CMakeFiles/serialPortRead.dir
