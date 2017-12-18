@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(serialPortRead)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O0 ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets)

@@ -14,7 +14,7 @@ int main(void)
 {
      //qstring to cout
      //QTextStream cout(stdout);
-	QByteArray  inBits;
+    QByteArray  inBits;
 
      QSerialPort m_serialPort;
      m_serialPort.setPortName(SERIALPORTNAME);
@@ -27,15 +27,15 @@ int main(void)
     cout << "Waiting for Data\n";
     for (int i = 0; i < 4; i++)
     {
-		m_serialPort.waitForReadyRead(-1);
-    
-		inBits.append(m_serialPort.readAll());
-	}
+        m_serialPort.waitForReadyRead(-1);
+
+        inBits.append(m_serialPort.readAll());
+    }
     m_serialPort.close();
-    
+
     string conversionString = inBits.toStdString();
 
-	int cursor = conversionString.find("\n");
+    int cursor = conversionString.find("\n");
 
     vector<unsigned char> tempChar;
     for (int i = cursor+1; i < conversionString.size(); ++i){
@@ -45,23 +45,19 @@ int main(void)
     //rebuild floats
     vector<float> finalVar;
     //4 bytes in a float
-    for (int i = 0; i < (tempChar.size()); i+=4){		
-		////rebuild here
-		float tempFloat = 0;
-		for (int j = 3+i; j > -1+i; --j){
-			if(j>tempChar.size()) break;
-			cout<<tempChar[j]<<endl;
-			unsigned char *c = (unsigned char *)&tempChar[j];
-			*((unsigned char*)(&tempFloat) + j) = c[j];
-		}
-		cout<<tempFloat<<endl;
-		//finalVar.push_back(tempFloat);		
-	}
-	
-	////testPrint
-	//for (int i = 0; i < finalVar.size(); i++){
-		//cout <<finalVar[i] <<endl;
-	//}
-		
+    for (int i = 0; i < (tempChar.size()); i+=4){
+        ////rebuild here
+        float tempFloat = 0;
+        for (int j = 3+i; j > -1+i; --j){
+
+            if(j>tempChar.size()) break;
+
+            unsigned char *c = (unsigned char *)&tempChar[j];
+            *((unsigned char*)(&tempFloat) + (j-i)) = c[0];
+        }
+        cout<<tempFloat<<endl;
+        finalVar.push_back(tempFloat);
+    }
+
     return 0;
 }
