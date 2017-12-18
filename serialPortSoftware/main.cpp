@@ -23,6 +23,7 @@ int main(void)
 
      if(!m_serialPort.open(QIODevice::ReadOnly)){
          cout << "ERROR CANNOT OPEN SERIAL PORT"<<endl;
+         return -1;
     }
 
     cout << "Waiting for Data\n";
