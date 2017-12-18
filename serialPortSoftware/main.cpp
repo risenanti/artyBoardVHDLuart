@@ -1,48 +1,67 @@
 #include <iostream>
-#include <QCoreApplication>
 #include <QtSerialPort>
 #include <QStringList>
 #include <QTextStream>
-#include <QTimer>
 #include <QByteArray>
+#include <vector>
 
 using namespace std;
 
 #define SERIALPORTNAME "/dev/ttyACM0"
 #define SERIALBAUDRATE 9600
 
-int main(int argc, char *argv[])
+int main(void)
 {
      //qstring to cout
      //QTextStream cout(stdout);
+	QByteArray  inBits;
 
      QSerialPort m_serialPort;
-     QByteArray  inBits;
-
      m_serialPort.setPortName(SERIALPORTNAME);
      m_serialPort.setBaudRate(SERIALBAUDRATE);
-
-     static int i = 0;
 
      if(!m_serialPort.open(QIODevice::ReadOnly)){
          cout << "ERROR CANNOT OPEN SERIAL PORT"<<endl;
     }
 
     cout << "Waiting for Data\n";
-
-    // read request
-    inBits = m_serialPort.readAll();
-    while (m_serialPort.waitForReadyRead(3000))
-       {
-        inBits.append(m_serialPort.readAll());
-        i++;
-        if(i>8) break;
-    }
+    for (int i = 0; i < 4; i++)
+    {
+		m_serialPort.waitForReadyRead(-1);
+    
+		inBits.append(m_serialPort.readAll());
+	}
     m_serialPort.close();
     
     string conversionString = inBits.toStdString();
 
+	int cursor = conversionString.find("\n");
+
+    vector<unsigned char> tempChar;
+    for (int i = cursor+1; i < conversionString.size(); ++i){
+         tempChar.push_back(conversionString.at(i));
+    }
+
+    //rebuild floats
+    vector<float> finalVar;
+    //4 bytes in a float
+    for (int i = 0; i < (tempChar.size()); i+=4){		
+		////rebuild here
+		float tempFloat = 0;
+		for (int j = 3+i; j > -1+i; --j){
+			if(j>tempChar.size()) break;
+			cout<<tempChar[j]<<endl;
+			unsigned char *c = (unsigned char *)&tempChar[j];
+			*((unsigned char*)(&tempFloat) + j) = c[j];
+		}
+		cout<<tempFloat<<endl;
+		//finalVar.push_back(tempFloat);		
+	}
+	
+	////testPrint
+	//for (int i = 0; i < finalVar.size(); i++){
+		//cout <<finalVar[i] <<endl;
+	//}
+		
     return 0;
 }
-
-//µRI@RI@vL]B^L¼A\nµRI@vL]B^L¼A\nµRI@vL]B^L¼A\n
