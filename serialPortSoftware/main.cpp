@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <QByteArray>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -53,9 +54,14 @@ int main(void)
             unsigned char *c = (unsigned char *)&tempChar[j];
             *((unsigned char*)(&tempFloat) + (j-i)) = c[0];
         }
-        cout<<tempFloat<<endl;
         finalVar.push_back(tempFloat);
     }
-
+    
+    ofstream outputFile;
+    outputFile.open("floats.txt");
+    for (int i = 0; i < finalVar.size(); i++){
+		outputFile<<finalVar[i] <<endl;
+	}
+	outputFile.close();
     return 0;
 }
