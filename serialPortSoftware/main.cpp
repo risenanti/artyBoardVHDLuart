@@ -49,9 +49,7 @@ int main(void)
         ////rebuild here
         float tempFloat = 0;
         for (int j = 3+i; j > -1+i; --j){
-
             if(j>tempChar.size()) break;
-
             unsigned char *c = (unsigned char *)&tempChar[j];
             *((unsigned char*)(&tempFloat) + (j-i)) = c[0];
         }
